@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday, Reegan Gunawan</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Poppins:wght@300;500;600;700;800&family=Mrs+Saint+Delafield&display=swap');
+
+  :root{
+    --navy:#0a0f1e;
+    --navy-2:#131b30;
+    --slate:#3a4a63;
+    --steel:#7c8ba1;
+    --gold:#c9a962;
+    --gold-2:#e8cd8a;
+    --bronze:#9c6b2e;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html, body{
+    height:100%;
+    overflow-x:hidden;
+    background:radial-gradient(ellipse at 50% -10%, #17223c 0%, var(--navy) 55%, #05070d 100%);
+    font-family:'Poppins', sans-serif;
+  }
+
+  body{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+  }
+
+  /* single lightweight canvas — stars always on, confetti/fireworks only run while active */
+  #scene{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+    z-index:1;
+  }
+
+  /* ── Balloons: a small fixed set, float once, no continuous spawning ── */
+  .balloon{
+    position:fixed;
+    bottom:-140px;
+    width:50px;
+    height:64px;
+    border-radius:50% 50% 50% 50% / 42% 42% 58% 58%;
+    z-index:2;
+    animation:floatUp linear forwards;
+    will-change:transform, opacity;
+  }
+  .balloon::after{
+    content:'';
+    position:absolute;
+    bottom:-34px; left:50%;
+    transform:translateX(-50%);
+    width:1px; height:34px;
+    background:rgba(201,169,98,.35);
+  }
+  @keyframes floatUp{
+    0%   { transform:translateY(0) rotate(0deg); opacity:.85; }
+    50%  { transform:translateY(-55vh) rotate(-4deg); }
+    100% { transform:translateY(-125vh) rotate(3deg); opacity:0; }
+  }
+
+  /* ── Main content ── */
+  .main-content{
+    z-index:8;
+    text-align:center;
+    padding:24px;
+    max-width:680px;
+    opacity:0;
+    animation:fadeInUp 1.1s ease-out .3s forwards;
+  }
+  @keyframes fadeInUp{
+    from{ opacity:0; transform:translateY(36px); }
+    to  { opacity:1; transform:translateY(0); }
+  }
+
+  /* ── Headline ── */
+  .eyebrow{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size:1.05rem;
+    letter-spacing:3px;
+    color:var(--steel);
+    text-transform:uppercase;
+    opacity:0;
+    animation:fadeInUp .9s ease-out .6s forwards;
+  }
+
+  .happy-birthday{
+    font-family:'Poppins', sans-serif;
+    font-weight:700;
+    font-size:2.5rem;
+    line-height:1.2;
+    margin:10px 0 4px;
+    color:#eef1f6;
+    letter-spacing:.5px;
+  }
+
+  /* ── Name reveal: signature-style script, soft rise, no blur/rotation cost ── */
+  .name{
+    font-family:'Mrs Saint Delafield', cursive;
+    font-weight:400;
+    font-size:4.2rem;
+    line-height:1;
+    letter-spacing:1px;
+    margin:6px 0 10px;
+    color:var(--gold-2);
+    filter:drop-shadow(0 2px 10px rgba(0,0,0,.35));
+  }
+  .name .underline{
+    display:block;
+    width:0;
+    height:1px;
+    margin:2px auto 0;
+    background:linear-gradient(90deg, transparent, var(--gold), transparent);
+    animation:drawLine .9s ease-out forwards;
+    animation-delay:1.7s;
+  }
+  @keyframes drawLine{
+    to{ width:220px; }
+  }
+  .letter{
+    display:inline-block;
+    opacity:0;
+    transform:translateY(14px);
+    animation:reveal .55s ease-out forwards;
+  }
+  @keyframes reveal{
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  .divider{
+    width:64px; height:1px;
+    margin:18px auto 16px;
+    background:linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity:0;
+    animation:fadeInUp .9s ease-out 1.5s forwards;
+  }
+
+  /* ── Message: deeper, quieter wording ── */
+  .message{
+    font-family:'Cormorant Garamond', serif;
+    font-size:1.32rem;
+    font-weight:500;
+    color:#c7cedb;
+    max-width:560px;
+    margin:0 auto;
+    line-height:1.75;
+    opacity:0;
+    animation:fadeInUp 1.1s ease-out 1.7s forwards;
+  }
+  .message .highlight{
+    color:var(--gold-2);
+    font-style:italic;
+  }
+
+  /* ── Hidden wish, revealed on click ── */
+  .wish-reveal{
+    max-height:0;
+    overflow:hidden;
+    opacity:0;
+    transition:max-height .7s ease, opacity .7s ease, margin .7s ease;
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size:1.2rem;
+    color:var(--gold-2);
+    max-width:520px;
+    margin:0 auto;
+    line-height:1.7;
+  }
+  .wish-reveal.open{
+    max-height:200px;
+    opacity:1;
+    margin:22px auto 0;
+  }
+
+  .wish-btn{
+    margin-top:26px;
+    padding:13px 44px;
+    font-family:'Poppins', sans-serif;
+    font-size:.95rem;
+    font-weight:600;
+    letter-spacing:1.5px;
+    color:var(--navy);
+    border:1px solid var(--gold);
+    border-radius:2px;
+    cursor:pointer;
+    background:linear-gradient(135deg, var(--gold-2), var(--gold));
+    box-shadow:0 8px 22px rgba(0,0,0,.35);
+    transition:transform .25s ease, box-shadow .25s ease, background .25s ease;
+    opacity:0;
+    animation:fadeInUp .9s ease-out 2s forwards;
+  }
+  .wish-btn:hover{ transform:translateY(-2px); box-shadow:0 12px 28px rgba(0,0,0,.45); }
+  .wish-btn.active{ background:linear-gradient(135deg, var(--gold), var(--bronze)); color:#fff; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+  }
+
+  @media (max-width:600px){
+    .happy-birthday{ font-size:1.85rem; }
+    .name{ font-size:2.7rem; }
+    .message{ font-size:1.08rem; padding:0 10px; }
+  }
+</style>
+</head>
+<body>
+
+  <canvas id="scene"></canvas>
+
+  <div class="main-content">
+    <div class="eyebrow">Another year, another chapter</div>
+    <div class="happy-birthday">Happy Birthday</div>
+    <div class="name" id="nameText"></div>
+    <div class="divider"></div>
+
+    <div class="message">
+      Some people simply <span class="highlight">make a room steadier</span> by being in it —
+      today is about honoring one of them.
+      May the year ahead bring work worth being proud of,
+      decisions that pay off, and people worth keeping close.
+      Not just a happier year, <span class="highlight">a stronger one</span>.
+    </div>
+
+    <div class="wish-reveal" id="wishReveal">
+      "Wishing you the kind of year that rewards the effort you put in —<br>
+      steady, deserved, and entirely yours."
+    </div>
+
+    <button class="wish-btn" id="wishBtn">Make a Wish</button>
+  </div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ---------- name reveal ---------- */
+  const NAME = "Reegan Gunawan";
+  const nameEl = document.getElementById('nameText');
+  NAME.split('').forEach((ch, i) => {
+    const span = document.createElement('span');
+    span.className = 'letter';
+    span.style.animationDelay = (0.85 + i * 0.045) + 's';
+    span.textContent = ch === ' ' ? '\u00A0' : ch;
+    nameEl.appendChild(span);
+  });
+  const underline = document.createElement('span');
+  underline.className = 'underline';
+  nameEl.appendChild(underline);
+
+  /* ---------- shared canvas ----------
+     Stars run continuously (cheap — small fixed count, no shadows/blur).
+     Confetti + fireworks are NOT continuous: they fire once on load and
+     again on click, then the arrays drain to empty and stop costing anything.
+     The render loop throttles itself down to ~24fps whenever only the stars
+     are left, and jumps back to full rate automatically during a burst. */
+  const canvas = document.getElementById('scene');
+  const ctx = canvas.getContext('2d', { alpha: true });
+  const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+
+  let W = 0, H = 0;
+  let stars = [];
+  let confetti = [];
+  let fireworks = [];
+  let sparks = [];
+  let loopActive = false;
+  let visible = !document.hidden;
+
+  const PALETTE = ['#c9a962', '#e8cd8a', '#9c6b2e', '#7c8ba1', '#eef1f6'];
+
+  function resize(){
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = W * DPR;
+    canvas.height = H * DPR;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+    const starCount = Math.min(55, Math.floor((W * H) / 16000));
+    stars = Array.from({ length: starCount }, () => ({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 1.3 + 0.4,
+      a: Math.random(),
+      da: (Math.random() - 0.5) * 0.01
+    }));
+  }
+
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(resize, 150);
+  });
+  resize();
+
+  function spawnConfetti(count){
+    if (confetti.length > 140) return;
+    for (let i = 0; i < count; i++){
+      confetti.push({
+        x: Math.random() * W,
+        y: -20 - Math.random() * 140,
+        w: Math.random() * 7 + 4,
+        h: Math.random() * 4 + 2,
+        color: PALETTE[(Math.random() * PALETTE.length) | 0],
+        vx: (Math.random() - 0.5) * 2.4,
+        vy: Math.random() * 2 + 1.6,
+        rot: Math.random() * 360,
+        rv: (Math.random() - 0.5) * 7,
+        life: 1
+      });
+    }
+    ensureLoop();
+  }
+
+  function launchFirework(){
+    if (fireworks.length > 3) return;
+    fireworks.push({
+      x: Math.random() * W * 0.7 + W * 0.15,
+      y: H,
+      targetY: Math.random() * H * 0.35 + 60,
+      vy: -6.5 - Math.random() * 2.5,
+      color: PALETTE[(Math.random() * PALETTE.length) | 0],
+      trail: []
+    });
+    ensureLoop();
+  }
+
+  function explode(fw){
+    if (sparks.length > 260) return;
+    const count = 34 + ((Math.random() * 18) | 0);
+    for (let i = 0; i < count; i++){
+      const angle = (Math.PI * 2 / count) * i;
+      const speed = Math.random() * 3.4 + 1.4;
+      sparks.push({
+        x: fw.x, y: fw.y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        color: fw.color,
+        life: 1,
+        decay: 0.016 + Math.random() * 0.016,
+        r: Math.random() * 2 + 1
+      });
+    }
+  }
+
+  function draw(){
+    ctx.clearRect(0, 0, W, H);
+
+    for (const s of stars){
+      s.a += s.da;
+      if (s.a <= 0.15 || s.a >= 1) s.da *= -1;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(200,210,230,${s.a.toFixed(2)})`;
+      ctx.fill();
+    }
+
+    if (confetti.length){
+      confetti = confetti.filter(p => p.life > 0 && p.y < H + 30);
+      for (const p of confetti){
+        p.x += p.vx; p.y += p.vy; p.vy += 0.03; p.rot += p.rv; p.life -= 0.0028;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot * Math.PI / 180);
+        ctx.globalAlpha = p.life;
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    if (fireworks.length){
+      fireworks = fireworks.filter(fw => {
+        fw.y += fw.vy;
+        fw.trail.push({ x: fw.x, y: fw.y });
+        if (fw.trail.length > 5) fw.trail.shift();
+        for (let i = 0; i < fw.trail.length; i++){
+          const t = fw.trail[i];
+          ctx.beginPath();
+          ctx.arc(t.x, t.y, 1.6, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(232,205,138,${(i / fw.trail.length) * 0.5})`;
+          ctx.fill();
+        }
+        if (fw.y <= fw.targetY){ explode(fw); return false; }
+        return true;
+      });
+    }
+
+    if (sparks.length){
+      sparks = sparks.filter(p => p.life > 0);
+      for (const p of sparks){
+        p.x += p.vx; p.y += p.vy; p.vy += 0.04; p.vx *= 0.985; p.vy *= 0.985;
+        p.life -= p.decay;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, Math.max(p.r * p.life, 0), 0, Math.PI * 2);
+        ctx.globalAlpha = Math.max(p.life, 0);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  function loop(){
+    if (!visible){ loopActive = false; return; }
+    draw();
+    const stillBursting = confetti.length || fireworks.length || sparks.length;
+    if (stillBursting){
+      requestAnimationFrame(loop);
+    } else {
+      // idle state: just the stars, throttled to ~24fps instead of 60
+      setTimeout(() => requestAnimationFrame(loop), 42);
+    }
+  }
+  function ensureLoop(){
+    if (!loopActive){
+      loopActive = true;
+      requestAnimationFrame(loop);
+    }
+  }
+  ensureLoop();
+
+  document.addEventListener('visibilitychange', () => {
+    visible = !document.hidden;
+    if (visible) ensureLoop();
+  });
+
+  /* ---------- balloons: fixed small set, float once ---------- */
+  function createBalloon(delay){
+    setTimeout(() => {
+      if (document.hidden) return;
+      const el = document.createElement('div');
+      el.className = 'balloon';
+      const color = PALETTE[(Math.random() * PALETTE.length) | 0];
+      el.style.background = `linear-gradient(135deg, ${color}, #0a0f1e88)`;
+      el.style.left = (Math.random() * 88 + 4) + '%';
+      const dur = Math.random() * 4 + 10;
+      el.style.animationDuration = dur + 's';
+      el.style.width = (Math.random() * 18 + 40) + 'px';
+      el.style.height = (Math.random() * 18 + 50) + 'px';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), dur * 1000 + 200);
+    }, delay);
+  }
+  [0, 500, 1100, 1800, 2600].forEach(createBalloon);
+
+  /* ---------- one-time opening flourish, then everything goes quiet ---------- */
+  setTimeout(() => spawnConfetti(60), 700);
+  setTimeout(launchFirework, 900);
+  setTimeout(launchFirework, 1500);
+
+  /* ---------- interactions ---------- */
+  const btn = document.getElementById('wishBtn');
+  const reveal = document.getElementById('wishReveal');
+  let opened = false;
+
+  btn.addEventListener('click', () => {
+    spawnConfetti(50);
+    launchFirework();
+    setTimeout(launchFirework, 220);
+
+    btn.classList.add('active');
+    if (!opened){
+      opened = true;
+      reveal.classList.add('open');
+      btn.textContent = 'Wish Sent';
+      setTimeout(() => { btn.textContent = 'Make a Wish'; btn.classList.remove('active'); }, 2400);
+    }
+  });
+})();
+</script>
+</body>
+</html>
